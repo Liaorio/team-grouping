@@ -11,6 +11,7 @@
 /* 控制面板样式 - 默认移动端样式（无圆角、全屏） */
 .control-panel {
   background: rgba(26, 26, 26, 0.95);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border: 1px solid #374151;
   border-radius: 0;
@@ -177,13 +178,13 @@
   padding: 14px 24px;
 }
 
-/* 结果面板样式 */
 .result-panel {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: rgba(26, 26, 26, 0.98);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border: 1px solid #374151;
   border-radius: 20px;
@@ -194,6 +195,7 @@
   max-width: 90%;
   width: 500px;
 }
+
 
 .result-panel h2 {
   margin-bottom: 20px;
@@ -216,7 +218,8 @@
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  html, body {
+  html,
+  body {
     height: 100vh;
     height: -webkit-fill-available; /* iOS Safari */
   }
@@ -358,4 +361,3 @@
     font-size: 1rem;
   }
 }
-

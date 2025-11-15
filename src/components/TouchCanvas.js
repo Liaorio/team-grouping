@@ -1,6 +1,13 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 
-function TouchCanvas({ isStarted, groups, touchPoints, onTouchPointsChange, colors, totalPeople, hasGrouped }) {
+function TouchCanvas({
+  isStarted,
+  groups,
+  touchPoints,
+  onTouchPointsChange,
+  totalPeople,
+  hasGrouped,
+}) {
   const canvasRef = useRef(null);
   const [localTouchPoints, setLocalTouchPoints] = useState([]);
   const [showInstruction, setShowInstruction] = useState(false);
@@ -21,7 +28,7 @@ function TouchCanvas({ isStarted, groups, touchPoints, onTouchPointsChange, colo
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
-    
+
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -35,36 +42,41 @@ function TouchCanvas({ isStarted, groups, touchPoints, onTouchPointsChange, colo
 
       // 决定使用哪个触摸点数据
       // 如果已分组且传入了touchPoints，使用传入的数据；否则使用本地状态
-      const pointsToDraw = (groups.length > 0 && touchPoints) ? touchPoints : localTouchPoints;
-      
-      
+      const pointsToDraw =
+        groups.length > 0 && touchPoints ? touchPoints : localTouchPoints;
+
       // 如果没有分组，显示所有触摸点
       if (groups.length === 0) {
-        pointsToDraw.forEach(touch => {
+        pointsToDraw.forEach((touch) => {
           drawTouchPoint(touch.x, touch.y, '#888');
         });
       } else {
         // 已分组状态：先绘制连线，再绘制触摸点
-        
+
         // 绘制连线 - 连接同一组内的所有点，按顺序连接
-        groups.forEach((group, groupIndex) => {
+        groups.forEach((group) => {
           if (group.length > 1) {
             for (let i = 0; i < group.length - 1; i++) {
               const touch = group[i];
               const nextTouch = group[i + 1];
               // 只在两个点都有坐标时绘制
               if (touch.x && touch.y && nextTouch.x && nextTouch.y) {
-                drawLine(touch.x, touch.y, nextTouch.x, nextTouch.y, touch.color);
+                drawLine(
+                  touch.x,
+                  touch.y,
+                  nextTouch.x,
+                  nextTouch.y,
+                  touch.color,
+                );
               }
             }
           }
         });
 
         // 绘制触摸点 - 只在有坐标时绘制
-        pointsToDraw.forEach(touch => {
-          if (touch.x && touch.y) {
+        pointsToDraw.forEach((touch) => {
+          if (touch.x && touch.y)
             drawTouchPoint(touch.x, touch.y, touch.color || '#888');
-          }
         });
       }
     };
@@ -88,7 +100,7 @@ function TouchCanvas({ isStarted, groups, touchPoints, onTouchPointsChange, colo
       ctx.beginPath();
       ctx.arc(x, y, 35, 0, Math.PI * 2);
       ctx.stroke();
-      
+
       // 再绘制填充圆
       ctx.fillStyle = color;
       ctx.shadowBlur = 20;
@@ -134,19 +146,21 @@ function TouchCanvas({ isStarted, groups, touchPoints, onTouchPointsChange, colo
       // 阻止默认行为，避免长按全选
       e.preventDefault();
       e.stopPropagation();
-      
-      const newTouches = Array.from(e.touches).map(touch => ({
+
+      const newTouches = Array.from(e.touches).map((touch) => ({
         id: touch.identifier,
         x: touch.clientX,
         y: touch.clientY,
         color: null,
-        group: null
+        group: null,
       }));
 
-      setLocalTouchPoints(prev => {
+      setLocalTouchPoints((prev) => {
         // 去重：只添加新的触摸点
-        const existingIds = new Set(prev.map(p => p.id));
-        const uniqueNewTouches = newTouches.filter(t => !existingIds.has(t.id));
+        const existingIds = new Set(prev.map((p) => p.id));
+        const uniqueNewTouches = newTouches.filter(
+          (t) => !existingIds.has(t.id),
+        );
         const newPoints = [...prev, ...uniqueNewTouches];
         return newPoints;
       });
@@ -154,39 +168,41 @@ function TouchCanvas({ isStarted, groups, touchPoints, onTouchPointsChange, colo
 
     const handleTouchMove = (e) => {
       if (!isStarted) return;
-      
+
       // 阻止默认行为和冒泡
       e.preventDefault();
       e.stopPropagation();
-      
-      Array.from(e.touches).forEach(touch => {
-        setLocalTouchPoints(prev => 
-          prev.map(p => 
-            p.id === touch.identifier 
+
+      Array.from(e.touches).forEach((touch) => {
+        setLocalTouchPoints((prev) =>
+          prev.map((p) =>
+            p.id === touch.identifier
               ? { ...p, x: touch.clientX, y: touch.clientY }
-              : p
-          )
+              : p,
+          ),
         );
       });
     };
 
     const handleTouchEnd = (e) => {
       if (!isStarted) return;
-      
+
       e.preventDefault();
       e.stopPropagation();
-      
+
       const endedTouches = Array.from(e.changedTouches);
-      
+
       // 若已经分组则立即清除；否则给予短暂缓冲，适配先后点击
       if (hasGrouped) {
-        setLocalTouchPoints(prev => 
-          prev.filter(p => !endedTouches.some(t => t.identifier === p.id))
+        setLocalTouchPoints((prev) =>
+          prev.filter((p) => !endedTouches.some((t) => t.identifier === p.id)),
         );
       } else {
         setTimeout(() => {
-          setLocalTouchPoints(prev => 
-            prev.filter(p => !endedTouches.some(t => t.identifier === p.id))
+          setLocalTouchPoints((prev) =>
+            prev.filter(
+              (p) => !endedTouches.some((t) => t.identifier === p.id),
+            ),
           );
         }, 250);
       }
@@ -194,25 +210,27 @@ function TouchCanvas({ isStarted, groups, touchPoints, onTouchPointsChange, colo
 
     const handleMouseDown = (e) => {
       if (!isStarted) return;
-      
+
       // 阻止默认行为
       e.preventDefault();
       e.stopPropagation();
-      
+
       const touchInfo = {
         id: Date.now() + Math.random(),
         x: e.clientX,
         y: e.clientY,
         color: null,
-        group: null
+        group: null,
       };
 
-      setLocalTouchPoints(prev => [...prev, touchInfo]);
+      setLocalTouchPoints((prev) => [...prev, touchInfo]);
 
       // 不在模拟模式下自动删除触摸点，让用户手动移除
       const handleMouseUp = (e) => {
         e.preventDefault();
-        setLocalTouchPoints(prev => prev.filter(p => p.id !== touchInfo.id));
+        setLocalTouchPoints((prev) =>
+          prev.filter((p) => p.id !== touchInfo.id),
+        );
         document.removeEventListener('mouseup', handleMouseUp);
       };
       document.addEventListener('mouseup', handleMouseUp);
@@ -236,20 +254,32 @@ function TouchCanvas({ isStarted, groups, touchPoints, onTouchPointsChange, colo
 
   return (
     <>
-      <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1 }} />
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 1,
+        }}
+      />
       {showInstruction && (
-        <div style={{
-          position: 'fixed',
-          top: '20px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          background: 'rgba(26, 26, 26, 0.95)',
-          padding: '20px 40px',
-          borderRadius: '15px',
-          zIndex: 100,
-          textAlign: 'center',
-          animation: 'fadeIn 0.5s'
-        }}>
+        <div
+          style={{
+            position: 'fixed',
+            top: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'rgba(26, 26, 26, 0.95)',
+            padding: '20px 40px',
+            borderRadius: '15px',
+            zIndex: 100,
+            textAlign: 'center',
+            animation: 'fadeIn 0.5s',
+          }}
+        >
           <h2>请将手指按在屏幕四周</h2>
           <p>目标人数: {totalPeople || '未设置'}</p>
           <p>当所有 {totalPeople || ''} 人准备好后，将进行自动分组</p>
@@ -260,4 +290,3 @@ function TouchCanvas({ isStarted, groups, touchPoints, onTouchPointsChange, colo
 }
 
 export default TouchCanvas;
-

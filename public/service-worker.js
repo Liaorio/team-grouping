@@ -1,9 +1,11 @@
 const CACHE_NAME = 'team-grouping-v1';
 const urlsToCache = [
   '/',
-  '/static/css/main.css',
-  '/static/js/main.js',
-  '/manifest.json'
+  '/manifest.json',
+  '/icons/icon-192x192.png',
+  '/icons/icon-512x512.png',
+  '/icons/favicon-32x32.png',
+  '/icons/favicon-16x16.png'
 ];
 
 // 安装 Service Worker
@@ -18,7 +20,7 @@ self.addEventListener('install', (event) => {
 });
 
 // 激活 Service Worker
-self.addEventListener('activate', (event) => {
+self.aselftener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
@@ -60,4 +62,3 @@ self.addEventListener('fetch', (event) => {
       })
   );
 });
-

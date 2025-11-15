@@ -1,5 +1,3 @@
-import React from 'react';
-
 function ResultPanel({ groups, colors, onReset }) {
   return (
     <div className="result-panel">
@@ -24,4 +22,3 @@ function ResultPanel({ groups, colors, onReset }) {
 }
 
 export default ResultPanel;
-
