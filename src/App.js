@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import './App.css';
 import ControlPanel from './components/ControlPanel';
 import TouchCanvas from './components/TouchCanvas';
-// 移除结果面板，改为底部按钮
 
 function App() {
   const [groupCount, setGroupCount] = useState(null);
   const [totalPeople, setTotalPeople] = useState('');
   const [isStarted, setIsStarted] = useState(false);
-  const [showResult, setShowResult] = useState(false);
   const [isGroupingScheduled, setIsGroupingScheduled] = useState(false);
   const [groupingTimerId, setGroupingTimerId] = useState(null);
   const [touchPoints, setTouchPoints] = useState([]);
@@ -20,13 +18,10 @@ function App() {
     setIsStarted(true);
     setTouchPoints([]);
     setGroups([]);
-    setShowResult(false);
-    // 清空触摸点状态
   };
 
   const handleReset = () => {
     setIsStarted(false);
-    setShowResult(false);
     setTouchPoints([]);
     setGroups([]);
     setGroupCount(null);
@@ -94,9 +89,6 @@ function App() {
     // 更新 touchPoints 和 groups
     setTouchPoints(updatedTouchPoints);
     setGroups(newGroups);
-
-    // 保持在连线画面，不显示结果面板
-    setShowResult(false);
   };
 
   return (
